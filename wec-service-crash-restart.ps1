@@ -1,13 +1,13 @@
-<## Set the name of the service you want to monitor and restart
+# Set the name of the service you want to monitor and restart
 $serviceName = "Windows Event Collector" #wec = Windows Event Collector 
 #tst is Windows Push Notifications System Service
 
 # Set the event ID that corresponds to service crashes
 $eventID = 7034 #tst is 7040 (crash is 7034)
-#>
+
 
 # Set the log file path (don't forget to create the directory)
-$logFilePath = "C:\Program Files\Seamless Intelligence\WEC Service Restart Script\logfile.txt"
+$logFilePath = "C:\Program Files\Seamless Intelligence\logfile.txt"
 #$logFilePath = "C:\temp\logfile.txt"
 
 # Function to get current date/time for logging
@@ -53,15 +53,15 @@ function Restart-ServiceIfNeeded {
    }
 }
 
-Restart-ServiceIfNeeded $serviceName | Out-File -FilePath $logFilePath -Append
+
 
 # Function to monitor the event log
-<#function Monitor-EventLog {
+function Monitor-EventLog {
    param (
        [int]$EventID,
        [string]$ServiceName
    )
-   $utcDate = (Get-Date).AddHours(-8).AddSeconds(-33)
+   $utcDate = (Get-Date).AddHours(-8).AddSeconds(-60)
    $utcDate = $utcDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
 
    $query = @"
@@ -91,10 +91,5 @@ Restart-ServiceIfNeeded $serviceName | Out-File -FilePath $logFilePath -Append
        Write-Output "[$(Get-CurrentDateTime)] No service crash events found in the event log."
    }
 }
-#>
-# Start monitoring the event log and write the output to the log file
-<#Write-Output "[$(Get-CurrentDateTime)] Monitoring for service crashes (Event ID: $eventID)..."
-while ($true) {
-   Monitor-EventLog -EventID $eventID -ServiceName $serviceName | Out-File -FilePath $logFilePath -Append 
-   Start-Sleep -Seconds 30
-}#>
+
+Monitor-EventLog -EventID $eventID -ServiceName $serviceName | Out-File -FilePath $logFilePath -Append 
